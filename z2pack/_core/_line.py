@@ -160,13 +160,12 @@ class Line(object):
             if self.wcc is not None and self._num_iter == N:
                 if self._kwargs['verbose'] in ['full', 'reduced']:
                     print('Number of k-points matches previous run. Skipping calculation.')
-                return
+                return False
             else:
                 self.wcc, _, self.lambda_ = self._trywcc(self._get_m(N))
                 self._converged = True
                 self._max_move = 1.
                 self._num_iter = N
-                return
         else:
             # catch restart
             if self.wcc is not None:
@@ -174,7 +173,7 @@ class Line(object):
                 if self._max_move < self._kwargs['pos_tol']:
                     if self._kwargs['verbose'] in ['full', 'reduced']:
                         print('pos_tol reached in a previous run!')
-                    return
+                    return False
                 # else fast-forward to N > previous max
                 else:
                     while N <= self._num_iter:
@@ -182,7 +181,7 @@ class Line(object):
                             N = next(iterator)
                         except StopIteration:
                             self._converged = False
-                            return
+                            return False
                     # re-attach last N to the iterator
                     iterator = itertools.chain([N], iterator)
                     if self._kwargs['verbose'] in ['full', 'reduced']:
@@ -198,6 +197,7 @@ class Line(object):
                 self._converged, self._max_move = _convcheck(self.wcc, wcc_old, self._kwargs['pos_tol'])
                 if self._converged:  # success
                     break
+        return True
 
     def _trywcc(self, all_m):
         """
