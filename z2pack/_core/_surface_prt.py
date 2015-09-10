@@ -27,13 +27,13 @@ class PrintFunctions(object):
             _print(self, "Calculating string at t = {0:.4f}, k = {1}:\n".
                    format(t, string_tools.fl_to_s(self._param_fct(t, 0.))))
             #-----------------------------------------------------------#
-            res = func(self, i, t)
+            conv, changed = func(self, i, t)
             #-----------------------------------------------------------#
             # check convergence flag
-            if not res:
+            if not conv:
                 self._log.log('pos check', t, string_tools.fl_to_s(self._param_fct(t, 0.)))
 
-            return # cut out convergence flag
+            return changed # cut out convergence flag
         return inner
 
     def _check_neighbours(func):

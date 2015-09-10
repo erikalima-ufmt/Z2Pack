@@ -138,10 +138,11 @@ class Surface(object):
         while not all(self._neighbour_check):
             for i, t in enumerate(self._t_points):
                 if not self._string_status[i]:
-                    self._call_line(i, t)
+                    has_changed = self._call_line(i, t)
                     self._gaps[i], self._gapsize[i] = _gapfind(self._line_list[i].wcc)
                     self._string_status[i] = True
-                    self.save()
+                    if has_changed:
+                        self.save()
 
             if self._check_neighbours() is None:
                 break
@@ -305,12 +306,13 @@ class Surface(object):
         r"""
         Creates the Line object if necessary and makes the call to its wcc_calc
         """
+        # TODO: don't save when line hasn't changed
         if self._line_list[i] is None:
             param_fct_line = lambda kx: self._param_fct(t, kx)
             self._line_list[i] = Line(self._m_handle, param_fct_line)
-        self._line_list[i].wcc_calc(pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose='reduced' if self._current['verbose'] else False)
+        has_changed = self._line_list[i].wcc_calc(pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose='reduced' if self._current['verbose'] else False)
         # get convergence flag to print function
-        return self._line_list[i].get_res()['converged']
+        return self._line_list[i].get_res()['converged'], has_changed
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 
     def log(self):

@@ -84,7 +84,7 @@ class Line(object):
             print(string_tools.cbox(string))
 
         # COMPUTATION
-        self._getwcc()
+        has_changed = self._getwcc()
         assert(hasattr(self, 'wcc'))
         assert(hasattr(self, 'lambda_'))
         assert(hasattr(self, '_num_iter'))
@@ -121,6 +121,7 @@ class Line(object):
                     ["finished wcc calculation: {0}".format(conv_message) + "\ntime: " + duration_string]))
         # CLEANUP
         del self._kwargs
+        return has_changed
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
