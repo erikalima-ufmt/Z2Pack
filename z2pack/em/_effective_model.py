@@ -7,11 +7,12 @@
 
 from __future__ import division, print_function
 
+import copy
 import numpy as np
 import scipy.linalg as la
 
 from .. import System as _Z2PackSystem
-#~ from ptools.monitoring import Timer # DEBUG / OPTIMIZATION
+from ptools.monitoring import Timer # DEBUG / OPTIMIZATION
 
 class System(_Z2PackSystem):
     r"""
@@ -67,9 +68,11 @@ class System(_Z2PackSystem):
         """
         returns:        M-matrices
         """
+        kpts = np.array(kpt)
+        
         # create k-points for string
-        N = len(kpt) - 1
-        k_points = kpt[:-1]
+        N = len(kpts) - 1
+        k_points = kpts[:-1]
 
         # get eigenvectors corr. to occupied states
         eigs = []
@@ -93,20 +96,9 @@ class System(_Z2PackSystem):
         eigsize, eignum = eigs[0].shape
 
         # create M - matrices
-        # TODO: optimize
         M = []
-        for i in range(0, N):
-            deltak = list(np.array(kpt[i + 1]) - np.array(kpt[i]))
-            dot_prod = [
-                np.exp(-2j * np.pi * np.dot(deltak, self._pos[j]))
-                for j in range(eigsize)
-            ]
-            Mnew = [[sum(
-                        np.conjugate(eigs[i][:, m]) * eigs[i + 1][:, n] * dot_prod
-                    )
-                    for n in range(eignum)
-                ]
-                for m in range(eignum)
-            ]
-            M.append(Mnew)
+        for i in range(N):
+            deltak = kpts[i + 1] - kpts[i]
+            dot_prod = np.exp(-2j * np.pi * np.dot(self._pos, deltak))
+            M.append(np.dot(eigs[i].conjugate().transpose() * dot_prod, eigs[i + 1]))
         return M

@@ -194,7 +194,8 @@ class TbModelTestCase(BuildDirTestCase):
         tb_surface.wcc_calc(verbose=False,
                             num_strings=5,
                             gap_tol=None,
-                            move_tol=None)
+                            move_tol=None,
+                            pos_tol=None)
 
         
         res = in_place_replace(tb_surface.get_res())
