@@ -93,21 +93,21 @@ class System(_Z2PackSystem):
         eigsize, eignum = eigs[0].shape
 
         # create M - matrices
+        # TODO: optimize
         M = []
-        for i in range(0, N):
-            deltak = list(np.array(kpt[i + 1]) - np.array(kpt[i]))
-            dot_prod = [
-                np.exp(-2j * np.pi * np.dot(deltak, self._pos[j]))
-                for j in range(eigsize)
-            ]
-            Mnew = [[
-                    sum(
-                        np.conjugate(eigs[i][j, m]) * eigs[i + 1][j, n] * dot_prod[j]
-                        for j in range(eigsize)
-                    )
-                    for n in range(eignum)
+        with Timer('setting up M matrices'):
+            for i in range(0, N):
+                deltak = list(np.array(kpt[i + 1]) - np.array(kpt[i]))
+                dot_prod = [
+                    np.exp(-2j * np.pi * np.dot(deltak, self._pos[j]))
+                    for j in range(eigsize)
                 ]
-                for m in range(eignum)
-            ]
-            M.append(Mnew)
+                Mnew = [[sum(
+                            np.conjugate(eigs[i][:, m]) * eigs[i + 1][:, n] * dot_prod
+                        )
+                        for n in range(eignum)
+                    ]
+                    for m in range(eignum)
+                ]
+                M.append(Mnew)
         return M
