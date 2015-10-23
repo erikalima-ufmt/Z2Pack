@@ -13,9 +13,10 @@ from ._surface_prt import prt_dispatcher
 from ._utils import *
 from ._line import Line
 
+from ..common.decorator_proxy import *
+
 import pickle
 import warnings
-import decorator
 import functools
 import numpy as np
 
