@@ -12,7 +12,6 @@ import numpy as np
 import scipy.linalg as la
 
 from .. import System as _Z2PackSystem
-from ptools.monitoring import Timer # DEBUG / OPTIMIZATION
 
 class System(_Z2PackSystem):
     r"""
