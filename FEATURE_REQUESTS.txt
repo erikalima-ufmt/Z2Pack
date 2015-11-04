@@ -1,0 +1,4 @@
+FIND DEGENERACY
+---------------
+routine to find values where the WCC come in pairs
+requested by: Georg
